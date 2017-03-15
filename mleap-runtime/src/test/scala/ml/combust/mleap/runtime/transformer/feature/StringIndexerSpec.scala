@@ -10,12 +10,12 @@ import org.scalatest.FunSpec
   */
 class StringIndexerSpec extends FunSpec {
   val schema = StructType(Seq(StructField("test_string", StringType()))).get
-  val dataset = LocalDataset(Seq(Row("index1"), Row("index2"), Row("index3")))
+  val dataset = LocalDataset(Seq(Row("index1"), Row("index2"), Row("index3"), Row(null)))
   val frame = LeapFrame(schema, dataset)
 
   val stringIndexer = StringIndexer(inputCol = "test_string",
     outputCol = "test_index",
-    model = StringIndexerModel(Seq("index1", "index2", "index3")))
+    model = StringIndexerModel(Seq("index1", "index2", "index3", "__unknown")))
 
   describe("#transform") {
     it("converts input string into an index") {
@@ -25,6 +25,7 @@ class StringIndexerSpec extends FunSpec {
       assert(data(0).getDouble(1) == 0.0)
       assert(data(1).getDouble(1) == 1.0)
       assert(data(2).getDouble(1) == 2.0)
+      assert(data(3).getDouble(1) == 3.0)
     }
 
     describe("with invalid input column") {
